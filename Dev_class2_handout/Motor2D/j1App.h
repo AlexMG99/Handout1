@@ -70,14 +70,14 @@ public:
 	j1Scene*			scene;
 
 
-private:
+public:
 
 	p2List<j1Module*>	modules;
 	uint				frames;
 	float				dt;
 
 	pugi::xml_document doc;
-	pugi::xml_node read;
+	pugi::xml_node config_node;
 
 	
 	// TODO 2: Create two new variables from pugui namespace:

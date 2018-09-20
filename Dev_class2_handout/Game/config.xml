@@ -1,5 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <config>
-  <name title="Platform2D">This is the best Game Ever</name>
+  <window>
+    <fullscreen value="false"/>
+    <borderless value="false"/>
+    <resizable value="true"/>
+    <fullscreen_window value="false"/>
+    <title name="Sad"/>
+    <width value="612"/>
+    <height value="375"/>
+    <scale value="1"/>
+  </window>
+  <renderer>
+  </renderer>
 </config>

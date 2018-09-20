@@ -66,10 +66,12 @@ bool j1App::Awake()
 		LOG("Error: %s", result.description());
 	}
 	
-	read = doc.first_child().child("name");
-	LOG("%s", read.name());
-	LOG("%s", read.child_value());
-	LOG("%s", read.attribute("title").value());
+	config_node = doc.child("config");
+	LOG("%s", config_node.name());
+	LOG("%s", config_node.child("window").name());
+	LOG("%s", config_node.child("window").attribute("title").value());
+	LOG("%s", config_node.child("window").child("fullscreen").attribute("value").value());
+	LOG("%s", App->config_node.child("window").child("title").attribute("name").value());
 
 	// If everything goes well, load the top tag inside the xml_node property
 	// created in the last TODO
