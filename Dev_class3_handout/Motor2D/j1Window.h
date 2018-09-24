@@ -18,6 +18,9 @@ public:
 	// Called before render is available
 	bool Awake(pugi::xml_node&);
 
+	//Called Load
+	bool Load() const;
+
 	// Called before quitting
 	bool CleanUp();
 

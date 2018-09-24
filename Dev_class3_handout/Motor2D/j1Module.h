@@ -65,7 +65,7 @@ public:
 		return true;
 	}
 	
-	virtual bool Load(const pugi::xml_node&) 
+	virtual bool Load(pugi::xml_node&) 
 	{
 		return true;
 	}

@@ -83,6 +83,25 @@ bool j1App::Awake()
 	return ret;
 }
 
+bool j1App::Load()
+{
+	bool ret = LoadSave();
+
+	if (ret == true)
+	{
+		p2List_item<j1Module*>* item;
+		item = modules.start;
+
+		while (item != NULL && ret == true)
+		{
+			ret = item->data->Load(save_node.child(item->data->name.GetString()));
+			item = item->next;
+		}
+	}
+
+	return ret;
+}
+
 // Called before the first frame
 bool j1App::Start()
 {
@@ -153,7 +172,7 @@ void j1App::FinishUpdate()
 {
 	// TODO 1: This is a good place to call load / Save functions
 	Save();
-	Load();
+	
 
 
 }
@@ -268,27 +287,6 @@ const char* j1App::GetOrganization() const
 
 
 // TODO 4: Create a simulation of the xml file to read 
-bool j1App::Save()
-{
-	bool ret = LoadSave();
-
-	if (ret == true)
-	{
-		p2List_item<j1Module*>* item;
-		item = modules.start;
-
-		while (item != NULL && ret == true)
-		{
-			ret = item->data->Save(save.child(item->data->name.GetString()));
-			item = item->next;
-		}
-	}
-
-	return ret;
-}
-// TODO 5: Create a method to actually load an xml file
-// then call all the modules to load themselves
-
 bool j1App::LoadSave()
 {
 	bool ret = true;
@@ -302,11 +300,15 @@ bool j1App::LoadSave()
 	}
 	else
 	{
-		save = save_file.child("save");
+		save_node = save_file.child("save");
 		LOG("ME HE CARGADO!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
 	}
 
 	return ret;
 }
+// TODO 5: Create a method to actually load an xml file
+// then call all the modules to load themselves
+
+
 // TODO 7: Create a method to save the current state
 

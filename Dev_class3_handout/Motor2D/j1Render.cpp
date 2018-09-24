@@ -51,6 +51,8 @@ bool j1Render::Awake(pugi::xml_node& config)
 	return ret;
 }
 
+
+
 // Called before the first frame
 bool j1Render::Start()
 {
@@ -89,7 +91,13 @@ bool j1Render::CleanUp()
 
 // TODO 6: Create a method to load the state
 // for now it will be camera's x and y
+bool j1Render::Load(pugi::xml_node& render) {
 
+	camera.x = render.child("camera").attribute("x").as_int();
+	camera.y = render.child("camera").attribute("y").as_int();
+
+	return true;
+}
 // TODO 8: Create a method to save the state of the renderer
 // using append_child and append_attribute
 

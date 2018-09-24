@@ -45,7 +45,7 @@ public:
 	const char* GetOrganization() const;
 
 	// TODO 1: Create methods to save and load
-	bool Save();
+	bool Save() { return true; };
 	bool Load();
 	// that can be called anytime, even if they 
 	// will one execute by the very end of the frame
@@ -91,7 +91,7 @@ private:
 	float				dt;
 	pugi::xml_document	config_file;
 	pugi::xml_document  save_file;
-	pugi::xml_node      save;
+	pugi::xml_node      save_node;
 	pugi::xml_node		config;
 	pugi::xml_node		app_config;
 	int					argc;

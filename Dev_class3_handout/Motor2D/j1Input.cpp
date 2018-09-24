@@ -38,6 +38,8 @@ bool j1Input::Awake(pugi::xml_node& config)
 	return ret;
 }
 
+
+
 // Called before the first frame
 bool j1Input::Start()
 {
