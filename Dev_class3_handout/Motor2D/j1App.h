@@ -45,7 +45,7 @@ public:
 	const char* GetOrganization() const;
 
 	// TODO 1: Create methods to save and load
-	bool Save() { return true; };
+	bool Save();
 	bool Load();
 	// that can be called anytime, even if they 
 	// will one execute by the very end of the frame

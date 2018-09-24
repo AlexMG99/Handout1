@@ -102,6 +102,27 @@ bool j1App::Load()
 	return ret;
 }
 
+bool j1App::Save()
+{
+	bool ret = LoadSave();
+
+	if (ret == true)
+	{
+		p2List_item<j1Module*>* item;
+		item = modules.start;
+
+		while (item != NULL && ret == true)
+		{
+			ret = item->data->Save(save_node.child(item->data->name.GetString()));
+			item = item->next;
+		}
+	}
+
+	save_file.save_file("savefile.xml");
+
+	return ret;
+}
+
 // Called before the first frame
 bool j1App::Start()
 {
@@ -171,8 +192,6 @@ void j1App::PrepareUpdate()
 void j1App::FinishUpdate()
 {
 	// TODO 1: This is a good place to call load / Save functions
-	Save();
-	
 
 
 }
@@ -301,7 +320,6 @@ bool j1App::LoadSave()
 	else
 	{
 		save_node = save_file.child("save");
-		LOG("ME HE CARGADO!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
 	}
 
 	return ret;
