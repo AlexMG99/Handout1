@@ -10,9 +10,33 @@
 // Ignore Terrain Types and Tile Types for now, but we want the image!
 // ----------------------------------------------------
 
+enum class map_renderorder {
+	left_down,
+	right_down,
+	left_up,
+	right_up,
+	error
+};
+
+enum class map_orientation{
+	orthogonal,
+	isometric,
+	staggered,
+	hexagonal,
+	error
+};
 
 // TODO 1: Create a struct needed to hold the information to Map node
+struct map_info {
+	char* version;
+	map_orientation orientation = map_orientation::error;
+	map_renderorder renderorder = map_renderorder::error;
+	uint width = 0;
+	uint height = 0;
+	uint tilewidth = 0;
+	uint tileheight = 0;
 
+};
 
 // ----------------------------------------------------
 class j1Map : public j1Module
@@ -42,7 +66,7 @@ private:
 public:
 
 	// TODO 1: Add your struct for map info as public for now
-
+	struct map_info map;
 private:
 
 	pugi::xml_document	map_file;
