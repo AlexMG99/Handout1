@@ -9,6 +9,14 @@
 // TODO 2: Create a struct to hold information for a TileSet
 // Ignore Terrain Types and Tile Types for now, but we want the image!
 // ----------------------------------------------------
+struct TileSet_info {
+	uint firstgid = 0;
+	p2SString name;
+	uint tilewidth = 0;
+	uint tileheight = 0;
+	uint spacing = 0;
+	uint margin = 0;
+};
 
 enum class map_renderorder {
 	left_down,
@@ -28,7 +36,7 @@ enum class map_orientation{
 
 // TODO 1: Create a struct needed to hold the information to Map node
 struct map_info {
-	char* version;
+	p2SString version;
 	map_orientation orientation = map_orientation::error;
 	map_renderorder renderorder = map_renderorder::error;
 	uint width = 0;
@@ -66,7 +74,6 @@ private:
 public:
 
 	// TODO 1: Add your struct for map info as public for now
-	struct map_info map;
 private:
 
 	pugi::xml_document	map_file;
