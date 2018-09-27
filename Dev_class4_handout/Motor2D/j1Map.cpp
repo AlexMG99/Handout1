@@ -58,6 +58,9 @@ bool j1Map::Load(const char* file_name)
 
 	pugi::xml_parse_result result = map_file.load_file(tmp.GetString());
 
+	map_node = map_file.child("map");
+	LOG("Node name is: %s", map_node.name());
+
 	if(result == NULL)
 	{
 		LOG("Could not load map xml file %s. pugi error: %s", file_name, result.description());
@@ -68,6 +71,7 @@ bool j1Map::Load(const char* file_name)
 	{
 		// TODO 3: Create and call a private function to load and fill
 		// all your map data
+		LoadMap(map_node);
 	}
 
 	// TODO 4: Create and call a private function to load a tileset
@@ -83,5 +87,21 @@ bool j1Map::Load(const char* file_name)
 	map_loaded = ret;
 
 	return ret;
+}
+
+bool j1Map::LoadMap(const pugi::xml_node& map_node) {
+	map.version = map_node.attribute("version").as_float();
+	LOG("La version es: %f papito", map_node.attribute("version").as_float());
+	//map.orientation = map_node.attribute("orientation").value();
+	//map.renderorder = map_node.attribute("renderorder").value();
+	map.width = map_node.attribute("width").as_uint();
+	LOG("Width: %u", map_node.attribute("width").as_uint());
+	map.height = map_node.attribute("height").as_uint();
+	LOG("Height: %u", map_node.attribute("height").as_uint());
+	map.tilewidth = map_node.attribute("tilewidth").as_uint();
+	LOG("Tile Width: %u", map_node.attribute("tilewidth").as_uint());
+	map.tileheight = map_node.attribute("tileheight").as_uint();
+	LOG("Tile Height: %u", map_node.attribute("tileheight").as_uint());
+	return true;
 }
 
