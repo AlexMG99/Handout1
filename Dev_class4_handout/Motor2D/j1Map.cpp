@@ -58,8 +58,7 @@ bool j1Map::Load(const char* file_name)
 
 	pugi::xml_parse_result result = map_file.load_file(tmp.GetString());
 
-	map_node = map_file.child("map");
-	LOG("Node name is: %s", map_node.name());
+
 
 	if(result == NULL)
 	{
@@ -71,12 +70,16 @@ bool j1Map::Load(const char* file_name)
 	{
 		// TODO 3: Create and call a private function to load and fill
 		// all your map data
+		map_node = map_file.child("map");
+		LOG("Node map name is: %s", map_node.name());
 		LoadMap(map_node);
 	}
 
 	// TODO 4: Create and call a private function to load a tileset
 	// remember to support more any number of tilesets!
-	
+	tileset_node = map_node.child("tileset");
+	LOG("Node tilset name is: %s", tileset_node.name());
+	LoadTileset(tileset_node);
 
 	if(ret == true)
 	{
@@ -90,10 +93,49 @@ bool j1Map::Load(const char* file_name)
 }
 
 bool j1Map::LoadMap(const pugi::xml_node& map_node) {
+
+	//Define render order
+	const char* renderorder = map_node.attribute("renderorder").as_string();
+	if (renderorder[0] == 'r')
+	{
+		if (renderorder[6] == 'd')
+		{
+			map.renderorder = map_renderorder::right_down;
+		}
+		else
+		{
+			map.renderorder = map_renderorder::right_up;
+		}
+	}
+	else if (renderorder[0] == 'l')
+	{
+		if (renderorder[5] == 'd')
+		{
+			map.renderorder = map_renderorder::left_down;
+		}
+		else
+		{
+			map.renderorder = map_renderorder::left_up;
+		}
+	}
+
+	LOG("Map render order: %i", map.renderorder);
+
+	//Define render order
+	const char* orientation = map_node.attribute("orientation").as_string();
+	if (renderorder[0] == 'o')
+	{
+		map.orientation = map_orientation::orthogonal;
+	}
+	else if (renderorder[0] == 'i')
+	{
+		map.orientation = map_orientation::isometric;
+	}
+
+	LOG("Map orientation: %i", map.orientation);
+
 	map.version = map_node.attribute("version").as_float();
 	LOG("La version es: %f papito", map_node.attribute("version").as_float());
-	//map.orientation = map_node.attribute("orientation").value();
-	//map.renderorder = map_node.attribute("renderorder").value();
 	map.width = map_node.attribute("width").as_uint();
 	LOG("Width: %u", map_node.attribute("width").as_uint());
 	map.height = map_node.attribute("height").as_uint();
@@ -102,6 +144,25 @@ bool j1Map::LoadMap(const pugi::xml_node& map_node) {
 	LOG("Tile Width: %u", map_node.attribute("tilewidth").as_uint());
 	map.tileheight = map_node.attribute("tileheight").as_uint();
 	LOG("Tile Height: %u", map_node.attribute("tileheight").as_uint());
+
+	return true;
+}
+
+bool j1Map::LoadTileset(const pugi::xml_node& tileset_node) {
+
+	tileset.firstgid = tileset_node.attribute("firstgid").as_uint();
+	LOG("Firstgid: %u", tileset_node.attribute("firstgid").as_uint());
+	tileset.name = tileset_node.attribute("name").value();
+	LOG("Name: %s", tileset_node.attribute("name").value());
+	tileset.tilewidth = tileset_node.attribute("tilewidth").as_uint();
+	LOG("Tileswidth: %u", tileset_node.attribute("tilewidth").as_uint());
+	tileset.tileheight = tileset_node.attribute("tileheight").as_uint();
+	LOG("Tileheight: %u", tileset_node.attribute("tileheight").as_uint());
+	tileset.spacing = tileset_node.attribute("spacing").as_uint();
+	LOG("Spacing: %u", tileset_node.attribute("spacing").as_uint());
+	tileset.margin = tileset_node.attribute("margin").as_uint();
+	LOG("Margin: %u", tileset_node.attribute("margin").as_uint());
+
 	return true;
 }
 
