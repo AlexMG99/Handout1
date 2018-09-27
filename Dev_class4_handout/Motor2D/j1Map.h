@@ -11,8 +11,9 @@
 // Ignore Terrain Types and Tile Types for now, but we want the image!
 // ----------------------------------------------------
 struct tileset_info {
+	SDL_Texture* imageTileset = nullptr;
 	uint firstgid = 0;
-	p2SString name;
+	const char* name;
 	uint tilewidth = 0;
 	uint tileheight = 0;
 	uint spacing = 0;

@@ -6,6 +6,7 @@
 #include "j1Map.h"
 #include <math.h>
 
+
 j1Map::j1Map() : j1Module(), map_loaded(false)
 {
 	name.create("map");
@@ -33,6 +34,10 @@ void j1Map::Draw()
 
 	// TODO 6: Iterate all tilesets and draw all their 
 	// images in 0,0 (you should have only one tileset for now)
+	std::list<tileset_info>::const_iterator iterator;
+	for (iterator = tilesetList.begin(); iterator != tilesetList.end(); ++iterator) {
+		App->render->Blit(iterator->imageTileset, 0, 0);
+	}
 
 }
 
@@ -85,6 +90,10 @@ bool j1Map::Load(const char* file_name)
 	{
 		// TODO 5: LOG all the data loaded
 		// iterate all tilesets and LOG everything
+		LOG("Successfully parsed map XML file : %s", map_file.name());
+		LOG("width : %u height : %u", map.width, map.height);
+		LOG("tile_width : %u tile_height : %u", map.tilewidth, map.tileheight);
+
 	}
 
 	map_loaded = ret;
@@ -135,15 +144,10 @@ bool j1Map::LoadMap(const pugi::xml_node& map_node) {
 	LOG("Map orientation: %i", map.orientation);
 
 	map.version = map_node.attribute("version").as_float();
-	LOG("La version es: %f papito", map.version);
 	map.width = map_node.attribute("width").as_uint();
-	LOG("Width: %u", map.width);
 	map.height = map_node.attribute("height").as_uint();
-	LOG("Height: %u", map.height);
 	map.tilewidth = map_node.attribute("tilewidth").as_uint();
-	LOG("Tile Width: %u", map.tilewidth);
 	map.tileheight = map_node.attribute("tileheight").as_uint();
-	LOG("Tile Height: %u", map.tileheight);
 
 	return true;
 }
@@ -152,19 +156,19 @@ bool j1Map::LoadTileset(const pugi::xml_node& tileset_node) {
 
 	for (pugi::xml_node tileset = tileset_node; tileset; tileset = tileset.next_sibling("tileset")) {
 		tileset_info newTileset;
-		newTileset.firstgid = tileset_node.attribute("firstgid").as_uint();
-		LOG("Firstgid: %u", newTileset.firstgid);
-		newTileset.name = tileset_node.attribute("name").value();
-		LOG("Name: %s", newTileset.name);
-		newTileset.tilewidth = tileset_node.attribute("tilewidth").as_uint();
-		LOG("Tileswidth: %u", newTileset.tilewidth);
-		newTileset.tileheight = tileset_node.attribute("tileheight").as_uint();
-		LOG("Tileheight: %u", newTileset.tileheight);
-		newTileset.spacing = tileset_node.attribute("spacing").as_uint();
-		LOG("Spacing: %u", newTileset.spacing);
-		newTileset.margin = tileset_node.attribute("margin").as_uint();
-		LOG("Margin: %u", newTileset.margin);
+		newTileset.imageTileset = App->tex->Load(tileset.parent().child("image").attribute("source").as_string());
+		newTileset.firstgid = tileset.attribute("firstgid").as_uint();
+		newTileset.name = tileset.attribute("name").value();
+		newTileset.tilewidth = tileset.attribute("tilewidth").as_uint();
+		newTileset.tileheight = tileset.attribute("tileheight").as_uint();
+		newTileset.spacing = tileset.attribute("spacing").as_uint();
+		newTileset.margin = tileset.attribute("margin").as_uint();
 		tilesetList.push_back(newTileset);
+
+		LOG("Tileset----");
+		LOG("name : %s firstgid : %u", newTileset.name, newTileset.firstgid);
+		LOG("tile_width : %u tile_height : %u", newTileset.tilewidth, newTileset.tileheight);
+		LOG("spacing : %u margin : %u", newTileset.spacing, newTileset.margin);
 	}
 
 	return true;
