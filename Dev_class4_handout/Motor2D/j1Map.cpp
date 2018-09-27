@@ -135,33 +135,37 @@ bool j1Map::LoadMap(const pugi::xml_node& map_node) {
 	LOG("Map orientation: %i", map.orientation);
 
 	map.version = map_node.attribute("version").as_float();
-	LOG("La version es: %f papito", map_node.attribute("version").as_float());
+	LOG("La version es: %f papito", map.version);
 	map.width = map_node.attribute("width").as_uint();
-	LOG("Width: %u", map_node.attribute("width").as_uint());
+	LOG("Width: %u", map.width);
 	map.height = map_node.attribute("height").as_uint();
-	LOG("Height: %u", map_node.attribute("height").as_uint());
+	LOG("Height: %u", map.height);
 	map.tilewidth = map_node.attribute("tilewidth").as_uint();
-	LOG("Tile Width: %u", map_node.attribute("tilewidth").as_uint());
+	LOG("Tile Width: %u", map.tilewidth);
 	map.tileheight = map_node.attribute("tileheight").as_uint();
-	LOG("Tile Height: %u", map_node.attribute("tileheight").as_uint());
+	LOG("Tile Height: %u", map.tileheight);
 
 	return true;
 }
 
 bool j1Map::LoadTileset(const pugi::xml_node& tileset_node) {
 
-	tileset.firstgid = tileset_node.attribute("firstgid").as_uint();
-	LOG("Firstgid: %u", tileset_node.attribute("firstgid").as_uint());
-	tileset.name = tileset_node.attribute("name").value();
-	LOG("Name: %s", tileset_node.attribute("name").value());
-	tileset.tilewidth = tileset_node.attribute("tilewidth").as_uint();
-	LOG("Tileswidth: %u", tileset_node.attribute("tilewidth").as_uint());
-	tileset.tileheight = tileset_node.attribute("tileheight").as_uint();
-	LOG("Tileheight: %u", tileset_node.attribute("tileheight").as_uint());
-	tileset.spacing = tileset_node.attribute("spacing").as_uint();
-	LOG("Spacing: %u", tileset_node.attribute("spacing").as_uint());
-	tileset.margin = tileset_node.attribute("margin").as_uint();
-	LOG("Margin: %u", tileset_node.attribute("margin").as_uint());
+	for (pugi::xml_node tileset = tileset_node; tileset; tileset = tileset.next_sibling("tileset")) {
+		tileset_info newTileset;
+		newTileset.firstgid = tileset_node.attribute("firstgid").as_uint();
+		LOG("Firstgid: %u", newTileset.firstgid);
+		newTileset.name = tileset_node.attribute("name").value();
+		LOG("Name: %s", newTileset.name);
+		newTileset.tilewidth = tileset_node.attribute("tilewidth").as_uint();
+		LOG("Tileswidth: %u", newTileset.tilewidth);
+		newTileset.tileheight = tileset_node.attribute("tileheight").as_uint();
+		LOG("Tileheight: %u", newTileset.tileheight);
+		newTileset.spacing = tileset_node.attribute("spacing").as_uint();
+		LOG("Spacing: %u", newTileset.spacing);
+		newTileset.margin = tileset_node.attribute("margin").as_uint();
+		LOG("Margin: %u", newTileset.margin);
+		tilesetList.push_back(newTileset);
+	}
 
 	return true;
 }
