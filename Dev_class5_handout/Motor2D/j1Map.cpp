@@ -77,7 +77,17 @@ bool j1Map::CleanUp()
 
 	// TODO 2: clean up all layer data
 	// Remove all layers
+	p2List_item<LayerMap*>* items;
+	items = data.layers.start;
 
+	while (items != NULL)
+	{
+		RELEASE(items->data);
+		items = items->next;
+	}
+	data.layers.clear();
+
+	//Programa de correcio de codi: sonar lint
 
 	// Clean up the pugui tree
 	map_file.reset();
