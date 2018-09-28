@@ -14,7 +14,13 @@ struct LayerMap {
 	uint		width = 0u;
 	uint		height = 0u;
 	uint*		data = nullptr;
-
+	~LayerMap()
+	{
+		if (data != nullptr) 
+		{
+			delete data;
+		}
+	}
 };
 
 	// TODO 6: Short function to get the value of x,y
