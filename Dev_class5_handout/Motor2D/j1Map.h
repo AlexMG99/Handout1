@@ -26,7 +26,6 @@ struct LayerMap {
 	// TODO 6: Short function to get the value of x,y
 
 
-
 // ----------------------------------------------------
 struct TileSet
 {
@@ -105,6 +104,10 @@ private:
 public:
 
 	MapData data;
+
+	inline uint Get(int x, int y) const {
+		return x * (data.width) + y;
+	}
 
 private:
 

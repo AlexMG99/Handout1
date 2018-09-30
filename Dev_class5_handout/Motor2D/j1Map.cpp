@@ -32,7 +32,23 @@ void j1Map::Draw()
 		return;
 
 	// TODO 5: Prepare the loop to draw all tilesets + Blit
-
+	p2List_item<LayerMap*>* item_layer = data.layers.start;
+	while (item_layer != NULL)
+	{
+		LayerMap* l = item_layer->data;
+		for (uint row = 0; row < l->width; row++) 
+		{
+			for (uint col = 0; col < l->height; col++) 
+			{
+				if (l->data[Get(row, col)] != 0) {
+					//App->render->Blit();
+				}
+			}
+		}
+		item_layer = item_layer->next;
+	}
+	
+	
 		// TODO 9: Complete the draw function
 
 }
