@@ -106,7 +106,7 @@ public:
 	MapData data;
 
 	inline uint Get(int x, int y) const {
-		return x * (data.width) + y;
+		return y * (data.width) + x;
 	}
 
 private:

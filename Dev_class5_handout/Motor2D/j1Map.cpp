@@ -33,6 +33,7 @@ void j1Map::Draw()
 
 	// TODO 5: Prepare the loop to draw all tilesets + Blit
 	p2List_item<LayerMap*>* item_layer = data.layers.start;
+	p2List_item<TileSet*>* item_tileset = data.tilesets.start;
 	while (item_layer != NULL)
 	{
 		LayerMap* l = item_layer->data;
@@ -41,7 +42,9 @@ void j1Map::Draw()
 			for (uint col = 0; col < l->height; col++) 
 			{
 				if (l->data[Get(row, col)] != 0) {
-					//App->render->Blit();
+					iPoint rect = MapToWorld(row, col);
+					SDL_Rect tile = item_tileset->data->GetTileRect(l->data[Get(row, col)]);
+					App->render->Blit(item_tileset->data->texture, rect.x, rect.y, &tile);
 				}
 			}
 		}
