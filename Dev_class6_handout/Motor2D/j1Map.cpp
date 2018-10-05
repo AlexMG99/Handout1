@@ -55,18 +55,33 @@ void j1Map::Draw()
 iPoint j1Map::MapToWorld(int x, int y) const
 {
 	iPoint ret;
-
-	ret.x = x * data.tile_width;
-	ret.y = y * data.tile_height;
-
-	return ret;
+	if (data.type == MAPTYPE_ORTHOGONAL) {
+		ret.x = x * data.tile_width;
+		ret.y = y * data.tile_height;
+	}
+	else if (data.type == MAPTYPE_ISOMETRIC)
+	{
+		ret.x = (x - y)*(data.tile_width*0.5F);
+		ret.y = (x + y)*(data.tile_height*0.5F);
+	}
+	
 	// TODO 1: Add isometric map to world coordinates
+	return ret;
 }
 
 
 iPoint j1Map::WorldToMap(int x, int y) const
 {
-	iPoint ret(0,0);
+	iPoint ret;
+	if (data.type == MAPTYPE_ORTHOGONAL) {
+		ret.x = (x / data.tile_width);
+		ret.y = (y / data.tile_height);
+	}
+
+	/*else if (data.type == MAPTYPE_ISOMETRIC) {
+		ret.x = ((x / (data.tile_width*0.5F)) + (y / (data.tile_height*0.5F))) / 2;
+		ret.y = ret.x;
+	}*/
 	// TODO 2: Add orthographic world to map coordinates
 
 	// TODO 3: Add the case for isometric maps to WorldToMap
