@@ -28,23 +28,39 @@ bool j1Map::Awake(pugi::xml_node& config)
 
 void j1Map::Draw()
 {
-	if(map_loaded == false)
+	if (map_loaded == false)
 		return;
 
-	// TODO 5(old): Prepare the loop to draw all tilesets + Blit
-	MapLayer* layer = data.layers.start->data; // for now we just use the first layer and tileset
-	TileSet* tileset = data.tilesets.start->data;
+	p2List_item<MapLayer*>* item_layer = data.layers.start;
+	p2List_item<TileSet*>* item_tileset = data.tilesets.start;
+	while (item_layer != NULL)
+	{
+		MapLayer* l = item_layer->data;
+		for (uint row = 0; row < l->width; row++)
+		{
+			for (uint col = 0; col < l->height; col++)
+			{
+				if (l->data[Get(row, col)] != 0) {
+					iPoint rect = MapToWorld(row, col);
+					SDL_Rect tile = item_tileset->data->GetTileRect(l->data[Get(row, col)]);
+					App->render->Blit(item_tileset->data->texture, rect.x, rect.y, &tile);
+				}
+			}
+		}
+		item_layer = item_layer->next;
+	}
 
-	// TODO 10(old): Complete the draw function
 }
 
 iPoint j1Map::MapToWorld(int x, int y) const
 {
-	iPoint ret(0,0);
-	// TODO 8(old): Create a method that translates x,y coordinates from map positions to world positions
+	iPoint ret;
 
-	// TODO 1: Add isometric map to world coordinates
+	ret.x = x * data.tile_width;
+	ret.y = y * data.tile_height;
+
 	return ret;
+	// TODO 1: Add isometric map to world coordinates
 }
 
 
@@ -59,8 +75,12 @@ iPoint j1Map::WorldToMap(int x, int y) const
 
 SDL_Rect TileSet::GetTileRect(int id) const
 {
-	SDL_Rect rect = {0, 0, 0, 0};
-	// TODO 7(old): Create a method that receives a tile id and returns it's Rect
+	int relative_id = id - firstgid;
+	SDL_Rect rect;
+	rect.w = tile_width;
+	rect.h = tile_height;
+	rect.x = margin + ((rect.w + spacing) * (relative_id % num_tiles_width));
+	rect.y = margin + ((rect.h + spacing) * (relative_id / num_tiles_width));
 	return rect;
 }
 
@@ -103,7 +123,7 @@ bool j1Map::Load(const char* file_name)
 	bool ret = true;
 	p2SString tmp("%s%s", folder.GetString(), file_name);
 
-	pugi::xml_parse_result result = map_file.load_file(file_name);
+	pugi::xml_parse_result result = map_file.load_file(tmp.GetString());
 
 	if(result == NULL)
 	{
@@ -332,6 +352,7 @@ bool j1Map::LoadLayer(pugi::xml_node& node, MapLayer* layer)
 		for(pugi::xml_node tile = layer_data.child("tile"); tile; tile = tile.next_sibling("tile"))
 		{
 			layer->data[i++] = tile.attribute("gid").as_int(0);
+			LOG("%u", layer->data[i]);
 		}
 	}
 
