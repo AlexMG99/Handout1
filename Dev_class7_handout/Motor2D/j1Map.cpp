@@ -28,63 +28,95 @@ bool j1Map::Awake(pugi::xml_node& config)
 
 void j1Map::Draw()
 {
-	if (map_loaded == false)
+	if(map_loaded == false)
 		return;
 
-	p2List_item<MapLayer*>* item_layer = data.layers.start;
-	p2List_item<TileSet*>* item_tileset = data.tilesets.start;
-	while (item_layer != NULL)
-	{
-		MapLayer* l = item_layer->data;
-		for (uint row = 0; row < l->width; row++)
+	// TODO 4: Make sure we draw all the layers and not just the first one
+	
+	p2List_item<MapLayer*>* map_item= data.layers.start;
+	while (map_item != NULL) {
+		MapLayer* layer = map_item->data;
+		for (int y = 0; y < data.height; ++y)
 		{
-			for (uint col = 0; col < l->height; col++)
+			for (int x = 0; x < data.width; ++x)
 			{
-				if (l->data[Get(row, col)] != 0) {
-					iPoint rect = MapToWorld(row, col);
-					SDL_Rect tile = item_tileset->data->GetTileRect(l->data[Get(row, col)]);
-					App->render->Blit(item_tileset->data->texture, rect.x, rect.y, &tile);
+				int tile_id = layer->Get(x, y);
+				if (tile_id > 0)
+				{
+					TileSet* tileset = GetTilesetFromTileId(tile_id);
+					if (tileset != nullptr)
+					{
+						SDL_Rect r = tileset->GetTileRect(tile_id);
+						iPoint pos = MapToWorld(x, y);
+
+						App->render->Blit(tileset->texture, pos.x, pos.y, &r);
+					}
 				}
 			}
 		}
-		item_layer = item_layer->next;
+		map_item = map_item->next;
 	}
+}
 
+TileSet* j1Map::GetTilesetFromTileId(int id) const
+{
+	p2List_item<TileSet*>* item = data.tilesets.start;
+	// TODO 3: Complete this method so we pick the right
+	/*while (item)
+	{
+		if (id < item->data->firstgid)
+			return item->prev->data;
+
+		item
+	}*/
 }
 
 iPoint j1Map::MapToWorld(int x, int y) const
 {
 	iPoint ret;
-	if (data.type == MAPTYPE_ORTHOGONAL) {
+
+	if(data.type == MAPTYPE_ORTHOGONAL)
+	{
 		ret.x = x * data.tile_width;
 		ret.y = y * data.tile_height;
 	}
-	else if (data.type == MAPTYPE_ISOMETRIC)
+	else if(data.type == MAPTYPE_ISOMETRIC)
 	{
-		ret.x = (x - y)*(data.tile_width*0.5F);
-		ret.y = (x + y)*(data.tile_height*0.5F);
+		ret.x = (x - y) * (data.tile_width * 0.5f);
+		ret.y = (x + y) * (data.tile_height * 0.5f);
 	}
-	
-	// TODO 1: Add isometric map to world coordinates
+	else
+	{
+		LOG("Unknown map type");
+		ret.x = x; ret.y = y;
+	}
+
 	return ret;
 }
 
-
 iPoint j1Map::WorldToMap(int x, int y) const
 {
-	iPoint ret;
-	if (data.type == MAPTYPE_ORTHOGONAL) {
-		ret.x = (x / data.tile_width);
-		ret.y = (y / data.tile_height);
+	iPoint ret(0,0);
+
+	if(data.type == MAPTYPE_ORTHOGONAL)
+	{
+		ret.x = x / data.tile_width;
+		ret.y = y / data.tile_height;
+	}
+	else if(data.type == MAPTYPE_ISOMETRIC)
+	{
+		
+		float half_width = data.tile_width * 0.5f;
+		float half_height = data.tile_height * 0.5f;
+		ret.x = int( (x / half_width + y / half_height) / 2);
+		ret.y = int( (y / half_height - (x / half_width)) / 2);
+	}
+	else
+	{
+		LOG("Unknown map type");
+		ret.x = x; ret.y = y;
 	}
 
-	else if (data.type == MAPTYPE_ISOMETRIC) {
-		ret.x = ((x / (data.tile_width*0.5F)) + (y / (data.tile_height*0.5F))) / 2;
-		ret.y = ret.x;
-	}
-	// TODO 2: Add orthographic world to map coordinates
-
-	// TODO 3: Add the case for isometric maps to WorldToMap
 	return ret;
 }
 
@@ -136,9 +168,9 @@ bool j1Map::CleanUp()
 bool j1Map::Load(const char* file_name)
 {
 	bool ret = true;
-	p2SString tmp("%s%s", folder.GetString(), file_name);
+	p2SString tmp("maps\\%s", folder.GetString(), file_name);
 
-	pugi::xml_parse_result result = map_file.load_file(tmp.GetString());
+	pugi::xml_parse_result result = map_file.load_file("maps/iso_walk.tmx");
 
 	if(result == NULL)
 	{
@@ -350,6 +382,7 @@ bool j1Map::LoadLayer(pugi::xml_node& node, MapLayer* layer)
 	layer->name = node.attribute("name").as_string();
 	layer->width = node.attribute("width").as_int();
 	layer->height = node.attribute("height").as_int();
+	LoadProperties(node, layer->properties);
 	pugi::xml_node layer_data = node.child("data");
 
 	if(layer_data == NULL)
@@ -367,9 +400,27 @@ bool j1Map::LoadLayer(pugi::xml_node& node, MapLayer* layer)
 		for(pugi::xml_node tile = layer_data.child("tile"); tile; tile = tile.next_sibling("tile"))
 		{
 			layer->data[i++] = tile.attribute("gid").as_int(0);
-			LOG("%u", layer->data[i]);
 		}
 	}
+
+	return ret;
+}
+
+// Load a group of properties from a node and fill a list with it
+bool j1Map::LoadProperties(pugi::xml_node& node, Properties& properties)
+{
+	bool ret = false;
+	
+	for(pugi::xml_node property_node = node.child("porperties").child("property"); property_node ; property_node.next_sibling("property"))
+	{
+		p2SString type = property_node.attribute("type").as_string();
+		if (node.name()=="tileset")
+		{
+			properties.map_property
+		}
+	}
+	// TODO 6: Fill in the method to fill the custom properties from 
+	// an xml_node
 
 	return ret;
 }
