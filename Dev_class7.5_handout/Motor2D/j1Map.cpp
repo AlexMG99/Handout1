@@ -37,8 +37,18 @@ void j1Map::ResetBFS()
 
 void j1Map::PropagateBFS()
 {
-	// TODO 1: If frontier queue contains elements
+	// TODO 1: If frontier queue contains elements,
 	// pop the last one and calculate its 4 neighbors
+	p2Queue_item<iPoint>* lastFrontier = nullptr;
+	lastFrontier = frontier.GetLast();
+	if(lastFrontier!=nullptr)
+	{
+		frontier.Pop(lastFrontier->data);
+		visited.add(iPoint(lastFrontier->data.x, lastFrontier->data.y + 1));
+		visited.add(iPoint(lastFrontier->data.x, lastFrontier->data.y - 1));
+		visited.add(iPoint(lastFrontier->data.x + 1, lastFrontier->data.y));
+		visited.add(iPoint(lastFrontier->data.x - 1, lastFrontier->data.y));
+	}
 
 	// TODO 2: For each neighbor, if not visited, add it
 	// to the frontier queue and visited list
