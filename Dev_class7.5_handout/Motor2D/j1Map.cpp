@@ -40,18 +40,32 @@ void j1Map::PropagateBFS()
 	// TODO 1: If frontier queue contains elements,
 	// pop the last one and calculate its 4 neighbors
 	p2Queue_item<iPoint>* lastFrontier = nullptr;
-	lastFrontier = frontier.GetLast();
+	p2Queue<iPoint> aux_queue;
+	lastFrontier = frontier.start;
 	if(lastFrontier!=nullptr)
 	{
 		frontier.Pop(lastFrontier->data);
-		visited.add(iPoint(lastFrontier->data.x, lastFrontier->data.y + 1));
-		visited.add(iPoint(lastFrontier->data.x, lastFrontier->data.y - 1));
-		visited.add(iPoint(lastFrontier->data.x + 1, lastFrontier->data.y));
-		visited.add(iPoint(lastFrontier->data.x - 1, lastFrontier->data.y));
+		aux_queue.Push(iPoint(lastFrontier->data.x, lastFrontier->data.y - 1));
+		aux_queue.Push(iPoint(lastFrontier->data.x + 1, lastFrontier->data.y));
+		aux_queue.Push(iPoint(lastFrontier->data.x, lastFrontier->data.y + 1));
+		aux_queue.Push(iPoint(lastFrontier->data.x - 1, lastFrontier->data.y));
 	}
+
 
 	// TODO 2: For each neighbor, if not visited, add it
 	// to the frontier queue and visited list
+
+	p2Queue_item<iPoint>* queue_item = aux_queue.start;
+	while (queue_item != NULL)
+	{
+		if (visited.find(queue_item->data) == -1 && IsWalkable(queue_item->data.x, queue_item->data.y))
+		{
+			frontier.Push(queue_item->data);
+			visited.add(queue_item->data);
+		}
+		aux_queue.Pop(queue_item->data);
+		queue_item = queue_item->next;
+	}
 }
 
 void j1Map::DrawBFS()
@@ -92,7 +106,30 @@ bool j1Map::IsWalkable(int x, int y) const
 {
 	// TODO 3: return true only if x and y are within map limits
 	// and the tile is walkable (tile id 0 in the navigation layer)
-	return true;
+	bool ret = false;
+	p2List_item<MapLayer*>* item_layer = data.layers.start;
+
+	if (y >=0 && y < data.height && x < data.width && x >= 0)
+	{
+		while (item_layer != NULL)
+		{
+			if (item_layer->data->properties.Get("Navigation") != 1)
+			{
+				item_layer = item_layer->next;
+			}
+			else
+			{
+				break;
+			}
+		}
+
+		if (item_layer->data->Get(x, y) != 26)
+		{
+			ret = true;
+			
+		}
+	}
+	return ret;
 }
 
 void j1Map::Draw()
