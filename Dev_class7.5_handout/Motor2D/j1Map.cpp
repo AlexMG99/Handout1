@@ -39,16 +39,16 @@ void j1Map::PropagateBFS()
 {
 	// TODO 1: If frontier queue contains elements,
 	// pop the last one and calculate its 4 neighbors
-	p2Queue_item<iPoint>* lastFrontier = nullptr;
+	iPoint lastFrontier = {0,0};
 	p2Queue<iPoint> aux_queue;
-	lastFrontier = frontier.start;
-	if(lastFrontier!=nullptr)
+	if(frontier.Count() != 0 )
 	{
-		frontier.Pop(lastFrontier->data);
-		aux_queue.Push(iPoint(lastFrontier->data.x, lastFrontier->data.y - 1));
-		aux_queue.Push(iPoint(lastFrontier->data.x + 1, lastFrontier->data.y));
-		aux_queue.Push(iPoint(lastFrontier->data.x, lastFrontier->data.y + 1));
-		aux_queue.Push(iPoint(lastFrontier->data.x - 1, lastFrontier->data.y));
+		lastFrontier = frontier.GetLast()->data;
+		frontier.Pop(lastFrontier);
+		aux_queue.Push(iPoint(lastFrontier.x, lastFrontier.y - 1));
+		aux_queue.Push(iPoint(lastFrontier.x + 1, lastFrontier.y));
+		aux_queue.Push(iPoint(lastFrontier.x, lastFrontier.y + 1));
+		aux_queue.Push(iPoint(lastFrontier.x - 1, lastFrontier.y));
 	}
 
 
