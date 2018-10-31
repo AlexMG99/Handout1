@@ -168,7 +168,22 @@ int PathNode::CalculateF(const iPoint& destination)
 int j1PathFinding::CreatePath(const iPoint& origin, const iPoint& destination)
 {
 	// TODO 1: if origin or destination are not walkable, return -1
+	if (!IsWalkable(origin) || !IsWalkable(destination))
+	{
+		return -1;
+	}
 
+	PathList open;
+	PathList close;
+
+	PathNode origin_path(0, origin.DistanceManhattan(destination), origin, nullptr);
+	open.list.add(origin_path);
+	p2List_item<PathNode>* path_list = open.list.start;
+	while (open.list.count() != 0 && path_list != nullptr)
+	{
+
+		path_list = path_list->next;
+	}
 	// TODO 2: Create two lists: open, close
 	// Add the origin tile to open
 	// Iterate while we have tile in the open list
