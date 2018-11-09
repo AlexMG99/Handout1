@@ -87,6 +87,7 @@ bool j1App::Awake()
 		organization.create(app_config.child("organization").child_value());
 
 		// TODO 1: Read from config file your framerate cap
+		frame_rate = app_config.attribute("framerate_cap").as_uint();
 	}
 
 	if(ret == true)
@@ -170,21 +171,23 @@ void j1App::PrepareUpdate()
 	last_sec_frame_count++;
 
 	// TODO 4: Calculate the dt: differential time since last frame
+	dt = (1000 / float((frame_count) / startup_time.ReadSec()) * 1000);
+
 	frame_time.Start();
 }
 
 // ---------------------------------------------
 void j1App::FinishUpdate()
 {
-	if(want_to_save == true)
+	if (want_to_save == true)
 		SavegameNow();
 
-	if(want_to_load == true)
+	if (want_to_load == true)
 		LoadGameNow();
 
 	// Framerate calculations --
 
-	if(last_sec_frame_time.Read() > 1000)
+	if (last_sec_frame_time.Read() > 1000)
 	{
 		last_sec_frame_time.Start();
 		prev_last_sec_frame_count = last_sec_frame_count;
@@ -198,12 +201,17 @@ void j1App::FinishUpdate()
 
 	static char title[256];
 	sprintf_s(title, 256, "Av.FPS: %.2f Last Frame Ms: %02u Last sec frames: %i  Time since startup: %.3f Frame Count: %lu ",
-			  avg_fps, last_frame_ms, frames_on_last_update, seconds_since_startup, frame_count);
+		avg_fps, last_frame_ms, frames_on_last_update, seconds_since_startup, frame_count);
 	App->win->SetTitle(title);
 
+	j1PerfTimer delay_timer;
 	// TODO 2: Use SDL_Delay to make sure you get your capped framerate
-
+	if (last_frame_ms < (1000 / frame_rate)) 
+	{
+		SDL_Delay((1000 / frame_rate) - last_frame_ms);
+	}
 	// TODO3: Measure accurately the amount of time it SDL_Delay actually waits compared to what was expected
+	LOG("We waited for %i milliseconds and got back in %.6f", (1000 / frame_rate) - last_frame_ms, delay_timer.ReadMs());
 }
 
 // Call modules before each loop iteration
@@ -247,7 +255,7 @@ bool j1App::DoUpdate()
 		// TODO 5: send dt as an argument to all updates
 		// you will need to update module parent class
 		// and all modules that use update
-		ret = item->data->Update();
+		ret = item->data->Update(dt);
 	}
 
 	return ret;
