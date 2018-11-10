@@ -112,6 +112,7 @@ private:
 
 	uint				frame_rate = 0;
 	float				dt = 0;
+	float				avg_fps = 1;
 };
 
 extern j1App* App; // No student is asking me about that ... odd :-S
