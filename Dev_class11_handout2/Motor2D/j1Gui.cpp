@@ -6,6 +6,8 @@
 #include "j1Fonts.h"
 #include "j1Input.h"
 #include "j1Gui.h"
+#include "UI_Label.h"
+#include "UI_Sprite.h"
 
 j1Gui::j1Gui() : j1Module()
 {
@@ -32,6 +34,8 @@ bool j1Gui::Start()
 {
 	atlas = App->tex->Load(atlas_file_name.GetString());
 
+	/*CreateLabel(30, 30, { 200,120,255, 240 }, "Bon die, Zero Two (02). Besto Waifu");*/
+
 	return true;
 }
 
@@ -44,6 +48,7 @@ bool j1Gui::PreUpdate()
 // Called after all Updates
 bool j1Gui::PostUpdate()
 {
+	Draw();
 	return true;
 }
 
@@ -53,6 +58,17 @@ bool j1Gui::CleanUp()
 	LOG("Freeing GUI");
 
 	return true;
+}
+
+
+j1Gui* j1Gui::CreateLabel(int x, int y, SDL_Color color, const char * text)
+{
+	/*j1Gui* label = new UI_Label(text, color);
+	label->pos_x = x;
+	label->pos_y = y;
+
+	return label;*/
+	return nullptr;
 }
 
 // const getter for atlas

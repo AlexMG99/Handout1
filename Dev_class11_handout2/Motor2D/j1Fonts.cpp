@@ -22,7 +22,7 @@ bool j1Fonts::Awake(pugi::xml_node& conf)
 {
 	LOG("Init True Type Font library");
 	bool ret = true;
-
+	
 	if(TTF_Init() == -1)
 	{
 		LOG("SDL_ttf could not initialize! SDL_ttf Error: %s\n", TTF_GetError());
@@ -73,7 +73,7 @@ TTF_Font* const j1Fonts::Load(const char* path, int size)
 }
 
 // Print text using font
-SDL_Texture* j1Fonts::Print(const char* text, SDL_Color color, TTF_Font* font)
+SDL_Texture* j1Fonts::Print(const char* text, SDL_Color color, _TTF_Font* font)
 {
 	SDL_Texture* ret = NULL;
 	SDL_Surface* surface = TTF_RenderText_Blended((font) ? font : default, text, color);

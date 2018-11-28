@@ -2,6 +2,7 @@
 #define __j1GUI_H__
 
 #include "j1Module.h"
+#include "SDL\include\SDL.h"
 
 #define CURSOR_WIDTH 2
 
@@ -33,14 +34,15 @@ public:
 	bool CleanUp();
 
 	// TODO 2: Create the factory methods
-	// Gui creation functions
+	j1Gui* CreateLabel(int x, int y, SDL_Color color, const char* text);
+
+	virtual void Draw() {};
 
 	const SDL_Texture* GetAtlas() const;
 
 private:
-
-	SDL_Texture* atlas;
-	p2SString atlas_file_name;
+	p2SString		atlas_file_name;
+	SDL_Texture*	atlas;
 };
 
 #endif // __j1GUI_H__
